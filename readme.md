@@ -70,5 +70,5 @@ $ yarn add 'https://www.github.com/subspace/module_name'
 Require this module inside a script
 
 ```javascript
-const module_name = require('module_name').default
+import module_name from '@subspace/module_name'
 ```

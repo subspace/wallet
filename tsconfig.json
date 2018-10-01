@@ -2,8 +2,12 @@
   "compilerOptions": {
       "module": "commonjs",
       "esModuleInterop": true,
-      "target": "es6",
+      "target": "es2017",
       "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "forceConsistentCasingInFileNames": true,
+      "allowSyntheticDefaultImports": false,
+      "declaration": true,
       "moduleResolution": "node",
       "sourceMap": true,
       "outDir": "dist",
