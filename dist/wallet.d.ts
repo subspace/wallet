@@ -1,14 +1,14 @@
-import * as interfaces from './interfaces';
-export default class Wallet implements interfaces.IWallet {
+import { IWallet, IProfileOptions, IProfile, IProfileObject, IContractOptions, IContract, IContractObject } from './interfaces';
+export default class Wallet implements IWallet {
     storage: any;
     constructor(storage: any);
     private keyChain;
-    profile: interfaces.IProfile;
-    contract: interfaces.IContract;
+    profile: IProfile;
+    contract: IContract;
     init(): Promise<void>;
-    createProfile(options?: interfaces.IProfileOptions): Promise<interfaces.IProfileObject>;
-    getProfile(): interfaces.IProfileObject;
-    createContract(options: interfaces.IContractOptions): Promise<interfaces.IContractObject>;
-    getContract(): interfaces.IContractObject;
+    createProfile(options?: IProfileOptions): Promise<IProfileObject>;
+    getProfile(): IProfileObject;
+    createContract(options: IContractOptions): Promise<IContractObject>;
+    getContract(): IContractObject;
     clear(): Promise<void>;
 }

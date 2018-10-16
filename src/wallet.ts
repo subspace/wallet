@@ -1,5 +1,5 @@
 import * as crypto from '@subspace/crypto'
-import * as interfaces from './interfaces'
+import {IWallet, IKeyOptions, IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject, IContractOptions,IContract, IContractObject} from './interfaces'
 
 // TODO 
   // must fix crypto.generateKeys() build so options can be passed in
@@ -9,13 +9,13 @@ import * as interfaces from './interfaces'
   // explore BLS signature as an alternative (like Chia)
   // explore HD keys as seed for encryption of backed up private keys
 
-export default class Wallet implements interfaces.IWallet {
+export default class Wallet implements IWallet {
   constructor( public storage: any) {}
-  private keyChain: interfaces.IKeyChain = {
+  private keyChain: IKeyChain = {
     keys: [],
     addKey:  async (type: string): Promise<string> => {
       const keyPair = await crypto.generateKeys()
-      const key: interfaces.IKey = {
+      const key: IKey = {
         id: crypto.getHash(keyPair.publicKeyArmored),
         type: type,
         createdAt: Date.now(),
@@ -27,14 +27,14 @@ export default class Wallet implements interfaces.IWallet {
       await this.keyChain.save()
       return key.id
     },
-    openKey: async (id: string, passphrase: string): Promise<interfaces.IKey> => {
+    openKey: async (id: string, passphrase: string): Promise<IKey> => {
       const key = this.keyChain.keys.filter(key => key.id === id)[0]
       key.privateObject = await crypto.getPrivateKeyObject(key.private, passphrase)
       return key
     },
-    removeKey: async (id: string) => {
+    removeKey: (id: string) => {
       this.keyChain.keys = this.keyChain.keys.filter(key => key.id !== id)
-      await this.keyChain.save()
+      this.keyChain.save()
     },
     save: async () => {
       await this.storage.put('keys', JSON.stringify(this.keyChain.keys))
@@ -50,10 +50,10 @@ export default class Wallet implements interfaces.IWallet {
       await this.storage.del('keys')
     }
   }
-  public profile: interfaces.IProfile = {
+  public profile: IProfile = {
     user: null,
     key: null,
-    create: async (options?: interfaces.IProfileOptions) => {
+    create: async (options?: IProfileOptions) => {
       const keyId = await this.keyChain.addKey('profile')
       this.profile.user = {
         id: keyId,
@@ -77,17 +77,18 @@ export default class Wallet implements interfaces.IWallet {
       }
     },
     clear: async () => {
-      await this.keyChain.removeKey(this.profile.user.id)
+      const p1 = this.keyChain.removeKey(this.profile.user.id)
       this.profile.user = null
       this.profile.key = null
-      await this.storage.del('user')
+      const p2 = this.storage.del('user')
+      await Promise.all([p1, p2])
     }
   }
-  public contract: interfaces.IContract = {
+  public contract: IContract = {
     options: null,
     state: null,
     key: null,
-    create: async (options: interfaces.IContractOptions) => {
+    create: async (options: IContractOptions) => {
       const keyId = await this.keyChain.addKey('contract')
       this.contract.key = await this.keyChain.openKey(keyId, options.passphrase)
       this.contract.options = {
@@ -103,7 +104,7 @@ export default class Wallet implements interfaces.IWallet {
       this.contract.state = {
         spaceUsed: 0,
         updatedAt: null,
-        recordIndex: []
+        recordIndex: new Set()
       }
       await this.contract.save()
     },
@@ -129,7 +130,7 @@ export default class Wallet implements interfaces.IWallet {
       await this.storage.del('contract')
     },
     addRecord: async (id: string, size: number) => {
-      this.contract.state.recordIndex.push(id)
+      this.contract.state.recordIndex.add(id)
       this.contract.state.spaceUsed += size
       this.contract.state.updatedAt = Date.now()
       await this.contract.save()
@@ -140,7 +141,7 @@ export default class Wallet implements interfaces.IWallet {
       await this.contract.save()
     },
     removeRecord: async (id: string, size: number) => {
-      this.contract.state.recordIndex = this.contract.state.recordIndex.filter(record => record !== id)
+      this.contract.state.recordIndex.delete(id)
       this.contract.state.spaceUsed -= size
       this.contract.state.updatedAt = Date.now()
       await this.contract.save()
@@ -152,14 +153,15 @@ export default class Wallet implements interfaces.IWallet {
     // if no profile on record will create a new one
 
     await this.keyChain.load()
-    await this.profile.load()
-    await this.contract.load()
+    const p1 = this.profile.load()
+    const p2 = this.contract.load()
+    await Promise.all([p1, p2])
     if (!this.profile) {
       this.profile.create()
     }
   }
 
-  public async createProfile(options?: interfaces.IProfileOptions) {
+  public async createProfile(options?: IProfileOptions) {
     // creates a new profile, if one does not exist
 
     if (this.profile.user) {
@@ -170,7 +172,7 @@ export default class Wallet implements interfaces.IWallet {
   }
 
   public getProfile() {
-    const profile: interfaces.IProfileObject = {
+    const profile: IProfileObject = {
       id: this.profile.user.id,
       name: this.profile.user.name,
       email: this.profile.user.email,
@@ -183,7 +185,7 @@ export default class Wallet implements interfaces.IWallet {
     return profile
   }
 
-  public async createContract(options: interfaces.IContractOptions) {
+  public async createContract(options: IContractOptions) {
     // creates a new contract and returns contract object ready for transaction
     await this.contract.create(options)
     return this.getContract()
@@ -194,7 +196,7 @@ export default class Wallet implements interfaces.IWallet {
       throw new Error('A contract does not exist, create one first')
     }
 
-    const contract: interfaces.IContractObject = {
+    const contract: IContractObject = {
       id: this.contract.options.id,
       name: this.contract.options.name,
       email: this.contract.options.email,
@@ -215,8 +217,10 @@ export default class Wallet implements interfaces.IWallet {
 
   public async clear() {
     // deletes the the profile, contract, and all keys
-    await this.profile.clear()
-    await this.contract.clear()
+    const p1 = this.profile.clear()
+    const p2 = this.contract.clear()
+    await Promise.all([p1, p2])
+    // keychains should already be empty, just in case
     await this.keyChain.clear()
   }
 

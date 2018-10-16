@@ -39,9 +39,9 @@ class Wallet {
                 key.privateObject = await crypto.getPrivateKeyObject(key.private, passphrase);
                 return key;
             },
-            removeKey: async (id) => {
+            removeKey: (id) => {
                 this.keyChain.keys = this.keyChain.keys.filter(key => key.id !== id);
-                await this.keyChain.save();
+                this.keyChain.save();
             },
             save: async () => {
                 await this.storage.put('keys', JSON.stringify(this.keyChain.keys));
@@ -83,10 +83,11 @@ class Wallet {
                 }
             },
             clear: async () => {
-                await this.keyChain.removeKey(this.profile.user.id);
+                const p1 = this.keyChain.removeKey(this.profile.user.id);
                 this.profile.user = null;
                 this.profile.key = null;
-                await this.storage.del('user');
+                const p2 = this.storage.del('user');
+                await Promise.all([p1, p2]);
             }
         };
         this.contract = {
@@ -109,7 +110,7 @@ class Wallet {
                 this.contract.state = {
                     spaceUsed: 0,
                     updatedAt: null,
-                    recordIndex: []
+                    recordIndex: new Set()
                 };
                 await this.contract.save();
             },
@@ -135,7 +136,7 @@ class Wallet {
                 await this.storage.del('contract');
             },
             addRecord: async (id, size) => {
-                this.contract.state.recordIndex.push(id);
+                this.contract.state.recordIndex.add(id);
                 this.contract.state.spaceUsed += size;
                 this.contract.state.updatedAt = Date.now();
                 await this.contract.save();
@@ -146,7 +147,7 @@ class Wallet {
                 await this.contract.save();
             },
             removeRecord: async (id, size) => {
-                this.contract.state.recordIndex = this.contract.state.recordIndex.filter(record => record !== id);
+                this.contract.state.recordIndex.delete(id);
                 this.contract.state.spaceUsed -= size;
                 this.contract.state.updatedAt = Date.now();
                 await this.contract.save();
@@ -157,8 +158,9 @@ class Wallet {
         // loads an existing profile, contract, and keys
         // if no profile on record will create a new one
         await this.keyChain.load();
-        await this.profile.load();
-        await this.contract.load();
+        const p1 = this.profile.load();
+        const p2 = this.contract.load();
+        await Promise.all([p1, p2]);
         if (!this.profile) {
             this.profile.create();
         }
@@ -213,8 +215,10 @@ class Wallet {
     }
     async clear() {
         // deletes the the profile, contract, and all keys
-        await this.profile.clear();
-        await this.contract.clear();
+        const p1 = this.profile.clear();
+        const p2 = this.contract.clear();
+        await Promise.all([p1, p2]);
+        // keychains should already be empty, just in case
         await this.keyChain.clear();
     }
 }

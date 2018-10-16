@@ -23,7 +23,7 @@ export interface IKeyChain {
   clear(): Promise<void>
   addKey(type: string): Promise<string>
   openKey(id: string, passphrase: string): Promise<IKey>
-  removeKey(id: string): Promise<void>
+  removeKey(id: string): void
 }
 
 export interface IKey {
@@ -83,7 +83,7 @@ export interface IContract {
   state: {
     spaceUsed: 0
     updatedAt: number
-    recordIndex: string[]
+    recordIndex: Set<string>
   }
   key: IKey
   create(options: IContractOptions): Promise<void>
@@ -106,7 +106,7 @@ export interface IContractObject {
   spaceUsed: number
   createdAt: number
   updatedAt: number
-  recordIndex: string[]
+  recordIndex: Set<string>
   publicKey: string
   privateKey: string
   privateKeyObject: any
