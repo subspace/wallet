@@ -166,6 +166,7 @@ export default class Wallet implements interfaces.IWallet {
       throw new Error('A profile already exists, clear existing first')
     } 
     await this.profile.create(options)
+    return this.getProfile()
   }
 
   public getProfile() {
@@ -184,6 +185,7 @@ export default class Wallet implements interfaces.IWallet {
   public async createContract(options: interfaces.IContractOptions) {
     // creates a new contract and returns contract object ready for transaction
     await this.contract.create(options)
+    return this.getContract()
   }
 
   public getContract() {

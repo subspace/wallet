@@ -6,9 +6,9 @@ export default class Wallet implements interfaces.IWallet {
     profile: interfaces.IProfile;
     contract: interfaces.IContract;
     init(): Promise<void>;
-    createProfile(options?: interfaces.IProfileOptions): Promise<void>;
+    createProfile(options?: interfaces.IProfileOptions): Promise<interfaces.IProfileObject>;
     getProfile(): interfaces.IProfileObject;
-    createContract(options: interfaces.IContractOptions): Promise<void>;
+    createContract(options: interfaces.IContractOptions): Promise<interfaces.IContractObject>;
     getContract(): interfaces.IContractObject;
     clear(): Promise<void>;
 }

@@ -169,6 +169,7 @@ class Wallet {
             throw new Error('A profile already exists, clear existing first');
         }
         await this.profile.create(options);
+        return this.getProfile();
     }
     getProfile() {
         const profile = {
@@ -185,6 +186,7 @@ class Wallet {
     async createContract(options) {
         // creates a new contract and returns contract object ready for transaction
         await this.contract.create(options);
+        return this.getContract();
     }
     getContract() {
         if (!this.contract.options) {
