@@ -44,13 +44,13 @@ let options = {
   name: 'Gavin Belson',      // optional name to associate with profile
   email: 'gavin@hooli.com',  // optional email to associate with profile
   passphrase: 'box_three',   // optional passhprase to associate with profile
+}
 ```
-
 
 Returns a profileObject through a callback or promise if no callback is specified.
 
 <a name="getProfile"></a>
-### `async wallet.getProfile(): profileObject`
+### `wallet.getProfile(): profileObject`
 Retrieves the current contract for usage by other modules.
 
 Returns a contractObject.
@@ -67,12 +67,13 @@ let options = {
   spaceReserved: 1000000000,  // space reserved in bytes, 1 GB is default
   ttl: 2628000000,            // time to live in ms, 1 month is default
   replicationFactor: 4        // number of replicas for each shard, 4 is default
+}
 ```
 
 Returns a contractObject through a callback or promise if no callback is specified.
 
 <a name="getContract"></a>
-### `async wallet.getContract(): contractObject | Error`
+### `wallet.getContract(): contractObject | Error`
 Retrieves the current contract for usage by other modules. Throws an error if no contract has been created.
 
 Returns a contractObject or an error.
@@ -82,7 +83,6 @@ Returns a contractObject or an error.
 Deletes the existing profile, contract, and all associated keys.
 
 Returns a void callback or promise if no callback is specified.
-
 
 ## Development usage
 
