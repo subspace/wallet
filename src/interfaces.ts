@@ -60,6 +60,7 @@ export interface IProfileObject {
   createdAt: number
   publicKey: string
   privateKey: string
+  privateKeyObject: any
 }
 
 export interface IContractOptions extends IKeyOptions {
@@ -108,6 +109,7 @@ export interface IContractObject {
   recordIndex: string[]
   publicKey: string
   privateKey: string
+  privateKeyObject: any
 }
 
 

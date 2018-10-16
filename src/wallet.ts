@@ -177,7 +177,8 @@ export default class Wallet implements interfaces.IWallet {
       passphrase: this.profile.user.passphrase,
       createdAt: this.profile.user.createdAt,
       publicKey: this.profile.key.public,
-      privateKey: this.profile.key.private
+      privateKey: this.profile.key.private,
+      privateKeyObject: this.profile.key.privateObject
     }
     return profile
   }
@@ -206,7 +207,8 @@ export default class Wallet implements interfaces.IWallet {
       updatedAt: this.contract.state.updatedAt,
       recordIndex: this.contract.state.recordIndex,
       publicKey: this.contract.key.public,
-      privateKey: this.contract.key.private
+      privateKey: this.contract.key.private,
+      privateKeyObject: this.contract.key.privateObject
     }
     return contract
   }
