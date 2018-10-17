@@ -13,8 +13,8 @@ export default class Wallet implements IWallet {
   constructor( public storage: any) {}
   private keyChain: IKeyChain = {
     keys: [],
-    addKey:  async (type: string): Promise<string> => {
-      const keyPair = await crypto.generateKeys()
+    addKey:  async (type: string, name: string, email: string, passphrase: string): Promise<string> => {
+      const keyPair = await crypto.generateKeys(name, email, passphrase)
       const key: IKey = {
         id: crypto.getHash(keyPair.publicKeyArmored),
         type: type,
@@ -54,7 +54,7 @@ export default class Wallet implements IWallet {
     user: null,
     key: null,
     create: async (options?: IProfileOptions) => {
-      const keyId = await this.keyChain.addKey('profile')
+      const keyId = await this.keyChain.addKey('profile', options.name, options.email, options.passphrase)
       this.profile.user = {
         id: keyId,
         name: options.name,
@@ -89,10 +89,11 @@ export default class Wallet implements IWallet {
     state: null,
     key: null,
     create: async (options: IContractOptions) => {
-      const keyId = await this.keyChain.addKey('contract')
+      const keyId = await this.keyChain.addKey('contract', options.name, options.email, options.passphrase)
       this.contract.key = await this.keyChain.openKey(keyId, options.passphrase)
       this.contract.options = {
         id: keyId,
+        owner: this.profile.user.id,
         name: options.name,
         email: options.email,
         passphrase: options.passphrase,
@@ -198,6 +199,7 @@ export default class Wallet implements IWallet {
 
     const contract: IContractObject = {
       id: this.contract.options.id,
+      owner: this.contract.options.owner,
       name: this.contract.options.name,
       email: this.contract.options.email,
       passphrase: this.contract.options.passphrase,

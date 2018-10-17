@@ -24,7 +24,7 @@
 
 "@subspace/crypto@github:subspace/crypto":
   version "0.0.1"
-  resolved "git+ssh://git@github.com/subspace/crypto.git#1d393a2df7e70639c79125aec6ee39fd7bb90892"
+  resolved "git+ssh://git@github.com/subspace/crypto.git#417e3526cd41ce3b9ccd50276bd9fb1db27bb1ff"
   dependencies:
     "@subspace/jump-consistent-hash" "github:subspace/jump-consistent-hash"
     "@subspace/rendezvous-hash" "github:subspace/rendezvous-hash"

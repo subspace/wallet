@@ -20,8 +20,8 @@ class Wallet {
         this.storage = storage;
         this.keyChain = {
             keys: [],
-            addKey: async (type) => {
-                const keyPair = await crypto.generateKeys();
+            addKey: async (type, name, email, passphrase) => {
+                const keyPair = await crypto.generateKeys(name, email, passphrase);
                 const key = {
                     id: crypto.getHash(keyPair.publicKeyArmored),
                     type: type,
@@ -61,7 +61,7 @@ class Wallet {
             user: null,
             key: null,
             create: async (options) => {
-                const keyId = await this.keyChain.addKey('profile');
+                const keyId = await this.keyChain.addKey('profile', options.name, options.email, options.passphrase);
                 this.profile.user = {
                     id: keyId,
                     name: options.name,
@@ -95,10 +95,11 @@ class Wallet {
             state: null,
             key: null,
             create: async (options) => {
-                const keyId = await this.keyChain.addKey('contract');
+                const keyId = await this.keyChain.addKey('contract', options.name, options.email, options.passphrase);
                 this.contract.key = await this.keyChain.openKey(keyId, options.passphrase);
                 this.contract.options = {
                     id: keyId,
+                    owner: this.profile.user.id,
                     name: options.name,
                     email: options.email,
                     passphrase: options.passphrase,
@@ -197,6 +198,7 @@ class Wallet {
         }
         const contract = {
             id: this.contract.options.id,
+            owner: this.contract.options.owner,
             name: this.contract.options.name,
             email: this.contract.options.email,
             passphrase: this.contract.options.passphrase,
