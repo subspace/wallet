@@ -72,6 +72,7 @@ export interface IContractOptions extends IKeyOptions {
 export interface IContract {
   options: {
     id: string
+    owner: string
     name: string
     email: string
     passphrase: string
@@ -97,6 +98,7 @@ export interface IContract {
 
 export interface IContractObject {
   id: string
+  owner: string
   name: string
   email: string
   passphrase: string
