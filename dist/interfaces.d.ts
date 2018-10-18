@@ -18,7 +18,7 @@ export interface IKeyChain {
     save(): Promise<void>;
     load(): Promise<void>;
     clear(): Promise<void>;
-    addKey(type: string): Promise<string>;
+    addKey(type: string, name: string, email: string, passphrase: string): Promise<string>;
     openKey(id: string, passphrase: string): Promise<IKey>;
     removeKey(id: string): void;
 }
@@ -64,6 +64,7 @@ export interface IContractOptions extends IKeyOptions {
 export interface IContract {
     options: {
         id: string;
+        owner: string;
         name: string;
         email: string;
         passphrase: string;
@@ -88,6 +89,7 @@ export interface IContract {
 }
 export interface IContractObject {
     id: string;
+    owner: string;
     name: string;
     email: string;
     passphrase: string;
