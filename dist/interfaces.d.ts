@@ -4,7 +4,6 @@ export interface IWallet {
     init(): Promise<void>;
     createProfile(options?: IProfileOptions): Promise<IProfileObject>;
     getProfile(): IProfileObject;
-    createContract(options: IContractOptions): Promise<IContractObject>;
     getContract(): IContractObject;
     clear(): Promise<void>;
 }
@@ -41,6 +40,8 @@ export interface IProfile {
         createdAt: number;
     };
     key: IKey;
+    proof: IProof;
+    pledge: IPledge;
     create(options?: IProfileOptions): Promise<void>;
     save(): Promise<void>;
     load(): Promise<void>;
@@ -79,6 +80,7 @@ export interface IContract {
         recordIndex: Set<string>;
     };
     key: IKey;
+    storeContract(contract: any): void;
     create(options: IContractOptions): Promise<void>;
     save(): Promise<void>;
     load(): Promise<void>;
@@ -88,6 +90,7 @@ export interface IContract {
     removeRecord(id: string, size: number): Promise<void>;
 }
 export interface IContractObject {
+    kind: 'contractObject';
     id: string;
     owner: string;
     name: string;
@@ -103,4 +106,16 @@ export interface IContractObject {
     publicKey: string;
     privateKey: string;
     privateKeyObject: any;
+}
+export interface IProof {
+    id: string;
+    size: number;
+    seed: string;
+    plot: string[];
+    createdAt: number;
+}
+export interface IPledge {
+    proof: string;
+    size: number;
+    interval: number;
 }
