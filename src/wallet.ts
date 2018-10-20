@@ -2,7 +2,6 @@ import * as crypto from '@subspace/crypto'
 import {IWallet, IKeyOptions, IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject, IContractOptions,IContract, IContractObject} from './interfaces'
 
 // TODO 
-  // must fix crypto.generateKeys() build so options can be passed in
   // need to import storage instead of pass to constructor to test properly 
   // method to create user key pair within apps (maybe)
   // method to backup keys to SSDB under the passphrase
@@ -53,6 +52,8 @@ export default class Wallet implements IWallet {
   public profile: IProfile = {
     user: null,
     key: null,
+    proof: null,
+    pledge: null,
     create: async (options?: IProfileOptions) => {
       const keyId = await this.keyChain.addKey('profile', options.name, options.email, options.passphrase)
       this.profile.user = {
@@ -88,6 +89,12 @@ export default class Wallet implements IWallet {
     options: null,
     state: null,
     key: null,
+    storeContract: (contract: any) => {
+      this.contract.key = contract.key
+      this.contract.options = contract.options
+      this.contract.state = contract.state
+      return this.getContract()
+    },
     create: async (options: IContractOptions) => {
       const keyId = await this.keyChain.addKey('contract', options.name, options.email, options.passphrase)
       this.contract.key = await this.keyChain.openKey(keyId, options.passphrase)
@@ -132,18 +139,18 @@ export default class Wallet implements IWallet {
     },
     addRecord: async (id: string, size: number) => {
       this.contract.state.recordIndex.add(id)
-      this.contract.state.spaceUsed += size
+      this.contract.state.spaceUsed += (size * this.contract.options.replicationFactor)
       this.contract.state.updatedAt = Date.now()
       await this.contract.save()
     },
     updateRecord: async (id: string, sizeDelta: number) => {
-      this.contract.state.spaceUsed += sizeDelta
+      this.contract.state.spaceUsed += (sizeDelta * this.contract.options.replicationFactor)
       this.contract.state.updatedAt = Date.now()
       await this.contract.save()
     },
     removeRecord: async (id: string, size: number) => {
       this.contract.state.recordIndex.delete(id)
-      this.contract.state.spaceUsed -= size
+      this.contract.state.spaceUsed -= (size * this.contract.options.replicationFactor)
       this.contract.state.updatedAt = Date.now()
       await this.contract.save()
     },
@@ -198,6 +205,7 @@ export default class Wallet implements IWallet {
     }
 
     const contract: IContractObject = {
+      kind: 'contractObject',
       id: this.contract.options.id,
       owner: this.contract.options.owner,
       name: this.contract.options.name,
