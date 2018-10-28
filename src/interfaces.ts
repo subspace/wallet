@@ -5,7 +5,7 @@ export interface IWallet {
   init(): Promise<void>
   createProfile(options?: IProfileOptions): Promise<IProfileObject>
   getProfile(): IProfileObject 
-  createContract(options: IContractOptions): Promise<IContractObject>
+  // createContract(options: IContractOptions): Promise<IContractObject>
   getContract(): IContractObject
   clear(): Promise<void>
 }
@@ -21,7 +21,7 @@ export interface IKeyChain {
   save(): Promise<void>
   load(): Promise<void>
   clear(): Promise<void>
-  addKey(type: string): Promise<string>
+  addKey(type: string, name: string, email: string, passphrase: string): Promise<string>
   openKey(id: string, passphrase: string): Promise<IKey>
   removeKey(id: string): void
 }
@@ -46,6 +46,8 @@ export interface IProfile {
     createdAt: number    
   }
   key: IKey
+  proof: IProof
+  pledge: IPledge
   create(options?: IProfileOptions): Promise<void>
   save(): Promise<void>
   load(): Promise<void>
@@ -72,6 +74,7 @@ export interface IContractOptions extends IKeyOptions {
 export interface IContract {
   options: {
     id: string
+    owner: string
     name: string
     email: string
     passphrase: string
@@ -86,6 +89,7 @@ export interface IContract {
     recordIndex: Set<string>
   }
   key: IKey
+  storeContract(contract: any): void
   create(options: IContractOptions): Promise<void>
   save(): Promise<void>
   load(): Promise<void>
@@ -96,7 +100,9 @@ export interface IContract {
 }
 
 export interface IContractObject {
+  kind: 'contractObject'
   id: string
+  owner: string
   name: string
   email: string
   passphrase: string
@@ -112,5 +118,18 @@ export interface IContractObject {
   privateKeyObject: any
 }
 
+export interface IProof {
+  id: string          // hash of my proof chain
+  size: number        // size of proof in GB
+  seed: string        // my public key 
+  plot: string[]      // the actual proof chain
+  createdAt: number  // when created
+}
+
+export interface IPledge {
+  proof: string     // hash of my proofchain (proof id)
+  size: number      // number of bytes pledged
+  interval: number  // ms between payments
+}
 
 

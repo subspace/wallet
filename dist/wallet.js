@@ -9,7 +9,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto = __importStar(require("@subspace/crypto"));
 // TODO 
-// must fix crypto.generateKeys() build so options can be passed in
 // need to import storage instead of pass to constructor to test properly 
 // method to create user key pair within apps (maybe)
 // method to backup keys to SSDB under the passphrase
@@ -20,8 +19,8 @@ class Wallet {
         this.storage = storage;
         this.keyChain = {
             keys: [],
-            addKey: async (type) => {
-                const keyPair = await crypto.generateKeys();
+            addKey: async (type, name, email, passphrase) => {
+                const keyPair = await crypto.generateKeys(name, email, passphrase);
                 const key = {
                     id: crypto.getHash(keyPair.publicKeyArmored),
                     type: type,
@@ -60,8 +59,10 @@ class Wallet {
         this.profile = {
             user: null,
             key: null,
+            proof: null,
+            pledge: null,
             create: async (options) => {
-                const keyId = await this.keyChain.addKey('profile');
+                const keyId = await this.keyChain.addKey('profile', options.name, options.email, options.passphrase);
                 this.profile.user = {
                     id: keyId,
                     name: options.name,
@@ -94,11 +95,18 @@ class Wallet {
             options: null,
             state: null,
             key: null,
+            storeContract: (contract) => {
+                this.contract.key = contract.key;
+                this.contract.options = contract.options;
+                this.contract.state = contract.state;
+                return this.getContract();
+            },
             create: async (options) => {
-                const keyId = await this.keyChain.addKey('contract');
+                const keyId = await this.keyChain.addKey('contract', options.name, options.email, options.passphrase);
                 this.contract.key = await this.keyChain.openKey(keyId, options.passphrase);
                 this.contract.options = {
                     id: keyId,
+                    owner: this.profile.user.id,
                     name: options.name,
                     email: options.email,
                     passphrase: options.passphrase,
@@ -137,18 +145,18 @@ class Wallet {
             },
             addRecord: async (id, size) => {
                 this.contract.state.recordIndex.add(id);
-                this.contract.state.spaceUsed += size;
+                this.contract.state.spaceUsed += (size * this.contract.options.replicationFactor);
                 this.contract.state.updatedAt = Date.now();
                 await this.contract.save();
             },
             updateRecord: async (id, sizeDelta) => {
-                this.contract.state.spaceUsed += sizeDelta;
+                this.contract.state.spaceUsed += (sizeDelta * this.contract.options.replicationFactor);
                 this.contract.state.updatedAt = Date.now();
                 await this.contract.save();
             },
             removeRecord: async (id, size) => {
                 this.contract.state.recordIndex.delete(id);
-                this.contract.state.spaceUsed -= size;
+                this.contract.state.spaceUsed -= (size * this.contract.options.replicationFactor);
                 this.contract.state.updatedAt = Date.now();
                 await this.contract.save();
             },
@@ -196,7 +204,9 @@ class Wallet {
             throw new Error('A contract does not exist, create one first');
         }
         const contract = {
+            kind: 'contractObject',
             id: this.contract.options.id,
+            owner: this.contract.options.owner,
             name: this.contract.options.name,
             email: this.contract.options.email,
             passphrase: this.contract.options.passphrase,

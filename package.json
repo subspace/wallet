@@ -1,7 +1,8 @@
 {
   "name": "@subspace/wallet",
   "version": "1.0.0",
-  "main": "dist/main.js",
+  "main": "dist/wallet.js",
+  "types": "dist/wallet.d.ts",
   "author": "subspace",
   "license": "MIT",
   "private": true,
