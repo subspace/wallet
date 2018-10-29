@@ -122,7 +122,7 @@ export interface IProof {
   id: string          // hash of my proof chain
   size: number        // size of proof in GB
   seed: string        // my public key 
-  plot: string[]      // the actual proof chain
+  plot: Set<string>      // the actual proof chain
   createdAt: number  // when created
 }
 
@@ -130,6 +130,7 @@ export interface IPledge {
   proof: string     // hash of my proofchain (proof id)
   size: number      // number of bytes pledged
   interval: number  // ms between payments
+  createdAt: number // timestamp to know when to get paid 
 }
 
 

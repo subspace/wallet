@@ -111,11 +111,12 @@ export interface IProof {
     id: string;
     size: number;
     seed: string;
-    plot: string[];
+    plot: Set<string>;
     createdAt: number;
 }
 export interface IPledge {
     proof: string;
     size: number;
     interval: number;
+    createdAt: number;
 }
