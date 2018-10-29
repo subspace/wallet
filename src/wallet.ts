@@ -1,5 +1,5 @@
 import * as crypto from '@subspace/crypto'
-import {IWallet, IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject,IContract, IContractPrivate, IContractPublic} from './interfaces'
+import {IWallet, IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject,IContract, IContractPrivate, IContractPublic, IContractData} from './interfaces'
 
 // TODO 
   // need to import storage instead of pass to constructor to test properly 
@@ -101,6 +101,12 @@ export default class Wallet implements IWallet {
         this.contract.options = contract.options
         this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase)
       } 
+    },
+    store: async (contract: IContractData) => {
+      this.contract.key = contract.key
+      this.contract.options = contract.options
+      this.contract.state = contract.state
+      await this.contract.save()
     },
     clear: async () => {
       await this.keyChain.removeKey(this.contract.options.id)

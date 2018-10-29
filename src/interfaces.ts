@@ -72,31 +72,39 @@ export interface IContractOptions extends IKeyOptions {
   replicationFactor: number
 }
 
-export interface IContract {
-  options: {
-    id: string
-    owner: string
-    name: string
-    email: string
-    passphrase: string
-    ttl: number
-    replicationFactor: number
-    spaceReserved: number
-    createdAt: number
-    contractSig: string
-  }
-  state: {
-    fundingTx: string
-    spaceUsed: 0
-    recordIndex: Set<string>
-  }
+export interface IContractOptions {
+  id: string
+  owner: string
+  name: string
+  email: string
+  passphrase: string
+  ttl: number
+  replicationFactor: number
+  spaceReserved: number
+  createdAt: number
+  contractSig: string
+}
+
+export interface IContractState {
+  fundingTx: string
+  spaceUsed: 0
+  recordIndex: Set<string>
+}
+
+export interface IContractData {
+  options: IContractOptions
+  state: IContractState
   key: IKey
+}
+
+export interface IContract extends IContractData {
   save(): Promise<void>
   load(): Promise<void>
   clear(): Promise<void>
   addRecord(id: string, size: number): Promise<void>
   updateRecord(id: string, sizeDelta: number): Promise<void>
   removeRecord(id: string, size: number): Promise<void>
+  store(contract: IContractData): Promise<void>
 }
 
 export interface IContractPublic {

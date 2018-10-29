@@ -108,6 +108,12 @@ class Wallet {
                     this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase);
                 }
             },
+            store: async (contract) => {
+                this.contract.key = contract.key;
+                this.contract.options = contract.options;
+                this.contract.state = contract.state;
+                await this.contract.save();
+            },
             clear: async () => {
                 await this.keyChain.removeKey(this.contract.options.id);
                 this.contract.options = null;
