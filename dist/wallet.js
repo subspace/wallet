@@ -95,33 +95,6 @@ class Wallet {
             options: null,
             state: null,
             key: null,
-            storeContract: (contract) => {
-                this.contract.key = contract.key;
-                this.contract.options = contract.options;
-                this.contract.state = contract.state;
-                return this.getContract();
-            },
-            create: async (options) => {
-                const keyId = await this.keyChain.addKey('contract', options.name, options.email, options.passphrase);
-                this.contract.key = await this.keyChain.openKey(keyId, options.passphrase);
-                this.contract.options = {
-                    id: keyId,
-                    owner: this.profile.user.id,
-                    name: options.name,
-                    email: options.email,
-                    passphrase: options.passphrase,
-                    ttl: options.ttl,
-                    replicationFactor: options.replicationFactor,
-                    spaceReserved: options.spaceReserved,
-                    createdAt: Date.now()
-                };
-                this.contract.state = {
-                    spaceUsed: 0,
-                    updatedAt: null,
-                    recordIndex: new Set()
-                };
-                await this.contract.save();
-            },
             save: async () => {
                 await this.storage.put('contract', JSON.stringify({
                     options: this.contract.options,
@@ -132,32 +105,27 @@ class Wallet {
                 const contract = JSON.parse(await this.storage.get('contract'));
                 if (contract) {
                     this.contract.options = contract.options;
-                    this.contract.state = contract.state;
                     this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase);
                 }
             },
             clear: async () => {
                 await this.keyChain.removeKey(this.contract.options.id);
                 this.contract.options = null;
-                this.contract.state = null;
                 this.contract.key = null;
                 await this.storage.del('contract');
             },
             addRecord: async (id, size) => {
                 this.contract.state.recordIndex.add(id);
                 this.contract.state.spaceUsed += (size * this.contract.options.replicationFactor);
-                this.contract.state.updatedAt = Date.now();
                 await this.contract.save();
             },
             updateRecord: async (id, sizeDelta) => {
                 this.contract.state.spaceUsed += (sizeDelta * this.contract.options.replicationFactor);
-                this.contract.state.updatedAt = Date.now();
                 await this.contract.save();
             },
             removeRecord: async (id, size) => {
                 this.contract.state.recordIndex.delete(id);
                 this.contract.state.spaceUsed -= (size * this.contract.options.replicationFactor);
-                this.contract.state.updatedAt = Date.now();
                 await this.contract.save();
             },
         };
@@ -194,17 +162,30 @@ class Wallet {
         };
         return profile;
     }
-    async createContract(options) {
-        // creates a new contract and returns contract object ready for transaction
-        await this.contract.create(options);
-        return this.getContract();
-    }
-    getContract() {
+    // public async createContract(options: IContractOptions) {
+    //   // creates a new contract and returns contract object ready for transaction
+    //   await this.contract.create(options)
+    //   return this.getContract()
+    // }
+    getPublicContract() {
         if (!this.contract.options) {
             throw new Error('A contract does not exist, create one first');
         }
         const contract = {
-            kind: 'contractObject',
+            id: this.contract.options.id,
+            ttl: this.contract.options.ttl,
+            replicationFactor: this.contract.options.replicationFactor,
+            spaceReserved: this.contract.options.spaceReserved,
+            createdAt: this.contract.options.createdAt,
+            contractSig: this.contract.options.contractSig
+        };
+        return contract;
+    }
+    getPrivateContract() {
+        if (!this.contract.options) {
+            throw new Error('A contract does not exist, create one first');
+        }
+        const contract = {
             id: this.contract.options.id,
             owner: this.contract.options.owner,
             name: this.contract.options.name,
@@ -215,7 +196,6 @@ class Wallet {
             spaceReserved: this.contract.options.spaceReserved,
             spaceUsed: this.contract.state.spaceUsed,
             createdAt: this.contract.options.createdAt,
-            updatedAt: this.contract.state.updatedAt,
             recordIndex: this.contract.state.recordIndex,
             publicKey: this.contract.key.public,
             privateKey: this.contract.key.private,

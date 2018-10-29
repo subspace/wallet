@@ -4,7 +4,8 @@ export interface IWallet {
     init(): Promise<void>;
     createProfile(options?: IProfileOptions): Promise<IProfileObject>;
     getProfile(): IProfileObject;
-    getContract(): IContractObject;
+    getPrivateContract(): IContractPrivate;
+    getPublicContract(): IContractPublic;
     clear(): Promise<void>;
 }
 export interface IKeyOptions {
@@ -73,15 +74,14 @@ export interface IContract {
         replicationFactor: number;
         spaceReserved: number;
         createdAt: number;
+        contractSig: string;
     };
     state: {
+        fundingTx: string;
         spaceUsed: 0;
-        updatedAt: number;
         recordIndex: Set<string>;
     };
     key: IKey;
-    storeContract(contract: any): void;
-    create(options: IContractOptions): Promise<void>;
     save(): Promise<void>;
     load(): Promise<void>;
     clear(): Promise<void>;
@@ -89,8 +89,15 @@ export interface IContract {
     updateRecord(id: string, sizeDelta: number): Promise<void>;
     removeRecord(id: string, size: number): Promise<void>;
 }
-export interface IContractObject {
-    kind: 'contractObject';
+export interface IContractPublic {
+    id: string;
+    createdAt: number;
+    spaceReserved: number;
+    replicationFactor: number;
+    ttl: number;
+    contractSig: string;
+}
+export interface IContractPrivate {
     id: string;
     owner: string;
     name: string;
@@ -101,7 +108,6 @@ export interface IContractObject {
     spaceReserved: number;
     spaceUsed: number;
     createdAt: number;
-    updatedAt: number;
     recordIndex: Set<string>;
     publicKey: string;
     privateKey: string;

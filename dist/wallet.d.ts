@@ -1,4 +1,4 @@
-import { IWallet, IProfileOptions, IProfile, IProfileObject, IContractOptions, IContract, IContractObject } from './interfaces';
+import { IWallet, IProfileOptions, IProfile, IProfileObject, IContract, IContractPrivate, IContractPublic } from './interfaces';
 export default class Wallet implements IWallet {
     storage: any;
     constructor(storage: any);
@@ -8,7 +8,7 @@ export default class Wallet implements IWallet {
     init(): Promise<void>;
     createProfile(options?: IProfileOptions): Promise<IProfileObject>;
     getProfile(): IProfileObject;
-    createContract(options: IContractOptions): Promise<IContractObject>;
-    getContract(): IContractObject;
+    getPublicContract(): IContractPublic;
+    getPrivateContract(): IContractPrivate;
     clear(): Promise<void>;
 }
