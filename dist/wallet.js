@@ -193,7 +193,6 @@ class Wallet {
         }
         const contract = {
             id: this.contract.options.id,
-            owner: this.contract.options.owner,
             name: this.contract.options.name,
             email: this.contract.options.email,
             passphrase: this.contract.options.passphrase,

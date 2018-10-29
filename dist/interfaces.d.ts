@@ -60,7 +60,6 @@ export interface IProfileObject {
 }
 export interface IContractOptions {
     id: string;
-    owner: string;
     name: string;
     email: string;
     passphrase: string;
@@ -72,7 +71,7 @@ export interface IContractOptions {
 }
 export interface IContractState {
     fundingTx: string;
-    spaceUsed: 0;
+    spaceUsed: number;
     recordIndex: Set<string>;
 }
 export interface IContractData {
@@ -99,7 +98,6 @@ export interface IContractPublic {
 }
 export interface IContractPrivate {
     id: string;
-    owner: string;
     name: string;
     email: string;
     passphrase: string;
