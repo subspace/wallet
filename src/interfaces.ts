@@ -66,12 +66,6 @@ export interface IProfileObject {
   privateKeyObject: any
 }
 
-export interface IContractOptions extends IKeyOptions {
-  spaceReserved: number
-  ttl: number
-  replicationFactor: number
-}
-
 export interface IContractOptions {
   id: string
   owner: string
