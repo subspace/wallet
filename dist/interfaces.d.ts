@@ -123,4 +123,5 @@ export interface IPledge {
     size: number;
     interval: number;
     createdAt: number;
+    pledgeTx: string;
 }

@@ -138,6 +138,7 @@ export interface IPledge {
   size: number      // number of bytes pledged
   interval: number  // ms between payments
   createdAt: number // timestamp to know when to get paid 
+  pledgeTx: string  // original pledge to the ledger
 }
 
 
