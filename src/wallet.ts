@@ -1,5 +1,6 @@
 import * as crypto from '@subspace/crypto'
-import {IWallet, IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject,IContract, IContractPrivate, IContractPublic, IContractData} from './interfaces'
+import {IWallet, IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject,IContract, IContractPrivate, IContractPublic, IContractData, IPledge} from './interfaces'
+export { IContractData, IPledge }
 
 // TODO 
   // need to import storage instead of pass to constructor to test properly 
