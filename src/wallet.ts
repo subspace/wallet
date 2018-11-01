@@ -139,7 +139,7 @@ export default class Wallet implements IWallet {
     const p1 = this.profile.load()
     const p2 = this.contract.load()
     await Promise.all([p1, p2])
-    if (!this.profile) {
+    if (!this.profile.user) {
       await this.profile.create()
     }
   }
