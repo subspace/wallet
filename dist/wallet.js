@@ -136,7 +136,7 @@ class Wallet {
             },
         };
     }
-    async init() {
+    async init(options) {
         // loads an existing profile, contract, and keys
         // if no profile on record will create a new one
         await this.keyChain.load();
@@ -144,7 +144,7 @@ class Wallet {
         const p2 = this.contract.load();
         await Promise.all([p1, p2]);
         if (!this.profile.user) {
-            await this.profile.create();
+            await this.profile.create(options);
         }
     }
     async createProfile(options) {

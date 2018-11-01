@@ -1,6 +1,6 @@
 import * as crypto from '@subspace/crypto'
 import {IWallet, IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject,IContract, IContractPrivate, IContractPublic, IContractData, IPledge} from './interfaces'
-export { IContractData, IPledge }
+export { IContractData, IPledge, IProfileOptions }
 
 // TODO 
   // need to import storage instead of pass to constructor to test properly 
@@ -131,7 +131,7 @@ export default class Wallet implements IWallet {
     },
   }
   
-  public async init() {
+  public async init(options: IProfileOptions) {
     // loads an existing profile, contract, and keys
     // if no profile on record will create a new one
 
@@ -140,12 +140,14 @@ export default class Wallet implements IWallet {
     const p2 = this.contract.load()
     await Promise.all([p1, p2])
     if (!this.profile.user) {
-      await this.profile.create()
+      await this.profile.create(options)
     }
   }
 
   public async createProfile(options?: IProfileOptions) {
     // creates a new profile, if one does not exist
+
+
 
     if (this.profile.user) {
       throw new Error('A profile already exists, clear existing first')

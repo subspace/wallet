@@ -2,7 +2,7 @@
 export interface IWallet {
   profile: IProfile
   contract: IContract
-  init(): Promise<void>
+  init(options: IProfileOptions): Promise<void>
   createProfile(options?: IProfileOptions): Promise<IProfileObject>
   getProfile(): IProfileObject 
   // createContract(options: IContractOptions): Promise<IContractObject>
