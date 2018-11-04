@@ -15,5 +15,9 @@
   },
   "dependencies": {
     "@subspace/crypto": "github:subspace/crypto"
+  },
+  "scripts": {
+    "build": "rm -rf dist/* && tsc -b",
+    "watch": "tsc -w"
   }
 }
