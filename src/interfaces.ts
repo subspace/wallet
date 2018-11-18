@@ -1,21 +1,9 @@
 
-export interface IWallet {
-  profile: IProfile
-  contract: IContract
-  init(options: IProfileOptions): Promise<void>
-  createProfile(options?: IProfileOptions): Promise<IProfileObject>
-  getProfile(): IProfileObject 
-  // createContract(options: IContractOptions): Promise<IContractObject>
-  getPrivateContract(): IContractPrivate
-  getPublicContract(): IContractPublic
-  clear(): Promise<void>
-}
-
 export interface IKeyOptions {
   name: string,
   email: string,
   passphrase: string
-} 
+}
 
 export interface IKeyChain {
   keys: IKey[]
@@ -44,7 +32,7 @@ export interface IProfile {
     name: string
     email: string
     passphrase: string
-    createdAt: number    
+    createdAt: number
   }
   key: IKey
   proof: IProof
@@ -128,7 +116,7 @@ export interface IContractPrivate {
 export interface IProof {
   id: string          // hash of my proof chain
   size: number        // size of proof in GB
-  seed: string        // my public key 
+  seed: string        // my public key
   plot: Set<string>      // the actual proof chain
   createdAt: number  // when created
 }
@@ -137,7 +125,7 @@ export interface IPledge {
   proof: string     // hash of my proofchain (proof id)
   size: number      // number of bytes pledged
   interval: number  // ms between payments
-  createdAt: number // timestamp to know when to get paid 
+  createdAt: number // timestamp to know when to get paid
   pledgeTx: string  // original pledge to the ledger
 }
 

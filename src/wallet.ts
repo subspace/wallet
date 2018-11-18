@@ -1,15 +1,15 @@
 import * as crypto from '@subspace/crypto'
-import {IWallet, IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject,IContract, IContractPrivate, IContractPublic, IContractData, IPledge} from './interfaces'
+import {IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject,IContract, IContractPrivate, IContractPublic, IContractData, IPledge} from './interfaces'
 export { IContractData, IPledge, IProfileOptions }
 
-// TODO 
-  // need to import storage instead of pass to constructor to test properly 
+// TODO
+  // need to import storage instead of pass to constructor to test properly
   // method to create user key pair within apps (maybe)
   // method to backup keys to SSDB under the passphrase
   // explore BLS signature as an alternative (like Chia)
   // explore HD keys as seed for encryption of backed up private keys
 
-export default class Wallet implements IWallet {
+export default class Wallet {
   constructor( public storage: any) {}
   private keyChain: IKeyChain = {
     keys: [],
@@ -101,7 +101,7 @@ export default class Wallet implements IWallet {
       if (contract) {
         this.contract.options = contract.options
         this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase)
-      } 
+      }
     },
     store: async (contract: IContractData) => {
       this.contract.key = contract.key
@@ -130,7 +130,7 @@ export default class Wallet implements IWallet {
       await this.contract.save()
     },
   }
-  
+
   public async init(options: IProfileOptions) {
     // loads an existing profile, contract, and keys
     // if no profile on record will create a new one
@@ -151,7 +151,7 @@ export default class Wallet implements IWallet {
 
     if (this.profile.user) {
       throw new Error('A profile already exists, clear existing first')
-    } 
+    }
     await this.profile.create(options)
     return this.getProfile()
   }
@@ -232,7 +232,7 @@ export default class Wallet implements IWallet {
   // public async createUserKeys() {
   //   // allows developer to create new keys for their users that conform to standard
 
-  //   // authentication 
+  //   // authentication
   //     // user opens the app (fully client side)
   //     // user authenticates locally with a username/passphrase
   //     // this results in a get request to the subspace network
@@ -242,11 +242,11 @@ export default class Wallet implements IWallet {
   //     // in contract state query users map by hash (username|password)
   //     // get that public key from subspace (stored under the contract)
   //     // decrypt the record associated with that public key using my passphrase (but it would be encrypted with symkey by default)
-  //     // what if you could provide an optional passphrase instead when creating the record, or have a special function for create user account 
+  //     // what if you could provide an optional passphrase instead when creating the record, or have a special function for create user account
   //   // authorization
   //     // now I have my keys, but how do I validate put requests
-  //     // if my key is valid for writes 
-  //     // any host can see the public key on the contract ACL and ensure that this is a valid write 
+  //     // if my key is valid for writes
+  //     // any host can see the public key on the contract ACL and ensure that this is a valid write
 
 
   //   // what should the user provide to setup an account?
@@ -262,18 +262,18 @@ export default class Wallet implements IWallet {
   //   // using subspace schema, all records are encrypted using private key
   //   // how would you encrypt the private key itself?
   //   // would have to be with a passphrase
-  //   // could crack by brute forcing it 
+  //   // could crack by brute forcing it
 
   //   // generate an HD key using a seedphrase
   //   // generate a PGP key normally
   //   // encrypt the PGP with the HD key
-  //   // backup the encrytped PGP key to subspace 
+  //   // backup the encrytped PGP key to subspace
   //   // this key can be recovered with the HD seedphrase
 
   //   // backup with a seedphrase that can regen the priva
   //   // backup with a passphrse but encrypted with the apps private key
 
-  //   // can you brute force a BIP-32 seedphrase 
+  //   // can you brute force a BIP-32 seedphrase
   // }
 
   // public async restoreKeysFromBackup() {
@@ -282,7 +282,7 @@ export default class Wallet implements IWallet {
 
   // public async restoreKeysFromSeed() {
   //   // if hd wallet is used this could restore the keys locally from a seed phrase
-  //   // not sure if you can create hd keys with openpgp 
+  //   // not sure if you can create hd keys with openpgp
   // }
 }
 
