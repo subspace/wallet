@@ -1,13 +1,3 @@
-export interface IWallet {
-    profile: IProfile;
-    contract: IContract;
-    init(options: IProfileOptions): Promise<void>;
-    createProfile(options?: IProfileOptions): Promise<IProfileObject>;
-    getProfile(): IProfileObject;
-    getPrivateContract(): IContractPrivate;
-    getPublicContract(): IContractPublic;
-    clear(): Promise<void>;
-}
 export interface IKeyOptions {
     name: string;
     email: string;

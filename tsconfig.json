@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-      "module": "commonjs",
-      "esModuleInterop": true,
+      "module": "umd",
+      "esModuleInterop": false,
       "target": "es2017",
       "noImplicitAny": true,
       "noImplicitReturns": true,
@@ -19,5 +19,5 @@
               "src/types/*"
           ]
       }
-  },
+  }
 }
