@@ -1,6 +1,6 @@
-import { IWallet, IProfileOptions, IProfile, IProfileObject, IContract, IContractPrivate, IContractPublic, IContractData, IPledge } from './interfaces';
-export { IContractData, IPledge, IProfileOptions };
-export default class Wallet implements IWallet {
+import { IProfileOptions, IProfile, IProfileObject, IContract, IContractPrivate, IContractPublic, IContractData, IPledge } from './interfaces';
+export { IContractData, IPledge, IProfileObject, IProfileOptions };
+export default class Wallet {
     storage: any;
     constructor(storage: any);
     private keyChain;
