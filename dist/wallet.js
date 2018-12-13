@@ -146,9 +146,12 @@
                 },
             };
         }
-        async init(options) {
+        async init(options, clearContract = false) {
             // loads an existing profile, contract, and keys
             // if no profile on record will create a new one
+            if (clearContract) {
+                await this.contract.clear();
+            }
             await this.keyChain.load();
             const p1 = this.profile.load();
             const p2 = this.contract.load();
