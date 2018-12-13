@@ -100,7 +100,9 @@ export default class Wallet {
       const contract = JSON.parse( await this.storage.get('contract'))
       if (contract) {
         this.contract.options = contract.options
-        this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase)
+        // this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase)
+        this.contract.key = contract.key
+        this.contract.state = contract.state
       }
     },
     store: async (contract: IContractData) => {
