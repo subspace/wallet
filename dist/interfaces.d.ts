@@ -8,7 +8,7 @@ export interface IKeyChain {
     save(): Promise<void>;
     load(): Promise<void>;
     clear(): Promise<void>;
-    addKey(type: string, name: string, email: string, passphrase: string): Promise<string>;
+    addKey(type: string, name: string, email: string, passphrase: string, publicKey?: string, privateKey?: string): Promise<string>;
     openKey(id: string, passphrase: string): Promise<IKey>;
     removeKey(id: string): void;
 }

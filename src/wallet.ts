@@ -11,16 +11,22 @@ export { IContractData, IPledge, IProfileObject, IProfileOptions }
 
 export default class Wallet {
   constructor( public storage: any) {}
+
   private keyChain: IKeyChain = {
     keys: [],
-    addKey:  async (type: string, name: string, email: string, passphrase: string): Promise<string> => {
-      const keyPair = await crypto.generateKeys(name, email, passphrase)
+    addKey:  async (type: string, name: string, email: string, passphrase: string, publicKey?: string, privateKey?: string): Promise<string> => {
+      if (!publicKey || !privateKey) {
+        const keyPair = await crypto.generateKeys(name, email, passphrase)
+        privateKey = keyPair.privateKeyArmored
+        publicKey = keyPair.publicKeyArmored
+      }
+      
       const key: IKey = {
-        id: crypto.getHash(keyPair.publicKeyArmored),
+        id: crypto.getHash(publicKey),
         type: type,
         createdAt: Date.now(),
-        public: keyPair.publicKeyArmored,
-        private: keyPair.privateKeyArmored,
+        public: publicKey,
+        private: privateKey,
         privateObject: null
       }
       this.keyChain.keys.push(key)
@@ -50,6 +56,7 @@ export default class Wallet {
       await this.storage.del('keys')
     }
   }
+
   public profile: IProfile = {
     user: null,
     key: null,
@@ -86,6 +93,7 @@ export default class Wallet {
       await Promise.all([p1, p2])
     }
   }
+
   public contract: IContract = {
     options: null,
     state: null,
@@ -100,21 +108,24 @@ export default class Wallet {
       const contract = JSON.parse( await this.storage.get('contract'))
       if (contract) {
         this.contract.options = contract.options
-        // this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase)
-        this.contract.key = contract.key
         this.contract.state = contract.state
+        this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase)
       }
     },
     store: async (contract: IContractData) => {
-      this.contract.key = contract.key
+     
       this.contract.options = contract.options
       this.contract.state = contract.state
+      // add the contract key to the keychain 
+      await this.keyChain.addKey('contract', contract.options.name, contract.options.email, contract.options.passphrase, contract.key.public, contract.key.private)
+      this.contract.key = await this.keyChain.openKey(this.contract.options.id, this.contract.options.passphrase)
       await this.contract.save()
     },
     clear: async () => {
       await this.keyChain.removeKey(this.contract.options.id)
       this.contract.options = null
       this.contract.key = null
+      this.contract.state = null
       await this.storage.del('contract')
     },
     addRecord: async (id: string, size: number) => {

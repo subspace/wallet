@@ -21,14 +21,18 @@
             this.storage = storage;
             this.keyChain = {
                 keys: [],
-                addKey: async (type, name, email, passphrase) => {
-                    const keyPair = await crypto.generateKeys(name, email, passphrase);
+                addKey: async (type, name, email, passphrase, publicKey, privateKey) => {
+                    if (!publicKey || !privateKey) {
+                        const keyPair = await crypto.generateKeys(name, email, passphrase);
+                        privateKey = keyPair.privateKeyArmored;
+                        publicKey = keyPair.publicKeyArmored;
+                    }
                     const key = {
-                        id: crypto.getHash(keyPair.publicKeyArmored),
+                        id: crypto.getHash(publicKey),
                         type: type,
                         createdAt: Date.now(),
-                        public: keyPair.publicKeyArmored,
-                        private: keyPair.privateKeyArmored,
+                        public: publicKey,
+                        private: privateKey,
                         privateObject: null
                     };
                     this.keyChain.keys.push(key);
@@ -107,21 +111,23 @@
                     const contract = JSON.parse(await this.storage.get('contract'));
                     if (contract) {
                         this.contract.options = contract.options;
-                        // this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase)
-                        this.contract.key = contract.key;
                         this.contract.state = contract.state;
+                        this.contract.key = await this.keyChain.openKey(contract.options.id, contract.options.passphrase);
                     }
                 },
                 store: async (contract) => {
-                    this.contract.key = contract.key;
                     this.contract.options = contract.options;
                     this.contract.state = contract.state;
+                    // add the contract key to the keychain 
+                    await this.keyChain.addKey('contract', contract.options.name, contract.options.email, contract.options.passphrase, contract.key.public, contract.key.private);
+                    this.contract.key = await this.keyChain.openKey(this.contract.options.id, this.contract.options.passphrase);
                     await this.contract.save();
                 },
                 clear: async () => {
                     await this.keyChain.removeKey(this.contract.options.id);
                     this.contract.options = null;
                     this.contract.key = null;
+                    this.contract.state = null;
                     await this.storage.del('contract');
                 },
                 addRecord: async (id, size) => {
