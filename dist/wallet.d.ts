@@ -6,7 +6,7 @@ export default class Wallet {
     private keyChain;
     profile: IProfile;
     contract: IContract;
-    init(options: IProfileOptions, clearContract?: boolean): Promise<void>;
+    init(options: IProfileOptions): Promise<void>;
     createProfile(options?: IProfileOptions): Promise<IProfileObject>;
     getProfile(): IProfileObject;
     getPublicContract(): IContractPublic;
