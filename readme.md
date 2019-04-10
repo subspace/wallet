@@ -1,4 +1,4 @@
-# Subspace Wallet Module
+codeco# Subspace Wallet Module
 
 Manages openpgp keys for user profiles and storage contracts.
 

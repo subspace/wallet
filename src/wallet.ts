@@ -14,6 +14,7 @@ export default class Wallet {
 
   private keyChain: IKeyChain = {
     keys: [],
+    // should be create key or add key, have to pass in keys when creating contracts
     addKey:  async (type: string, name: string, email: string, passphrase: string, publicKey?: string, privateKey?: string): Promise<string> => {
       if (!publicKey || !privateKey) {
         const keyPair = await crypto.generateKeys(name, email, passphrase)
@@ -57,6 +58,7 @@ export default class Wallet {
     }
   }
 
+  // should not be saving decrypted private keys to disk!!!!
   public profile: IProfile = {
     user: null,
     key: null,

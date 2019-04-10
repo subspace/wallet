@@ -89,23 +89,25 @@ export interface IContract extends IContractData {
 }
 
 export interface IContractPublic {
-  id: string
-  createdAt: number
-  spaceReserved: number
+  id: string                  // tx id
+  createdAt: number           // tx created at
+  spaceReserved: number     
   replicationFactor: number
   ttl: number
   contractSig: string
 }
 
+// takes a snapshot for 
+
 export interface IContractPrivate {
-  id: string
-  name: string
-  email: string
-  passphrase: string
-  ttl: number
-  replicationFactor: number
-  spaceReserved: number
-  spaceUsed: number
+  id: string              // contract id
+  name: string            // readable name (default for now)
+  email: string           // associated email (default for now)
+  passphrase: string      // associated passprhrase (default for now)
+  ttl: number             // defaults for one mont
+  replicationFactor: number // defaults for 1 (should be four)
+  spaceReserved: number     // defaults to 1 GB
+  spaceUsed: number         
   createdAt: number
   recordIndex: Set<string>
   publicKey: string
