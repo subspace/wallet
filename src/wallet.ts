@@ -120,11 +120,11 @@ export default class Wallet {
       this.contract.state = contract.state
       // add the contract key to the keychain 
       await this.keyChain.addKey('contract', contract.options.name, contract.options.email, contract.options.passphrase, contract.key.public, contract.key.private)
-      this.contract.key = await this.keyChain.openKey(this.contract.options.id, this.contract.options.passphrase)
+      this.contract.key = await this.keyChain.openKey(this.contract.options.txId, this.contract.options.passphrase)
       await this.contract.save()
     },
     clear: async () => {
-      await this.keyChain.removeKey(this.contract.options.id)
+      await this.keyChain.removeKey(this.contract.options.txId)
       this.contract.options = null
       this.contract.key = null
       this.contract.state = null
@@ -196,7 +196,7 @@ export default class Wallet {
     }
 
     const contract: IContractPublic = {
-      id: this.contract.options.id,
+      txId: this.contract.options.txId,
       ttl: this.contract.options.ttl,
       replicationFactor: this.contract.options.replicationFactor,
       spaceReserved: this.contract.options.spaceReserved,
@@ -215,7 +215,7 @@ export default class Wallet {
     }
 
     const contract: IContractPrivate = {
-      id: this.contract.options.id,
+      txId: this.contract.options.txId,
       name: this.contract.options.name,
       email: this.contract.options.email,
       passphrase: this.contract.options.passphrase,

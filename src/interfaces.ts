@@ -55,7 +55,7 @@ export interface IProfileObject {
 }
 
 export interface IContractOptions {
-  id: string
+  txId: string
   name: string
   email: string
   passphrase: string
@@ -89,7 +89,7 @@ export interface IContract extends IContractData {
 }
 
 export interface IContractPublic {
-  id: string                  // tx id
+  txId: string                  // tx id
   createdAt: number           // tx created at
   spaceReserved: number     
   replicationFactor: number
@@ -100,7 +100,7 @@ export interface IContractPublic {
 // takes a snapshot for 
 
 export interface IContractPrivate {
-  id: string              // contract id
+  txId: string              // contract id
   name: string            // readable name (default for now)
   email: string           // associated email (default for now)
   passphrase: string      // associated passprhrase (default for now)

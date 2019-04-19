@@ -49,7 +49,7 @@ export interface IProfileObject {
     privateKeyObject: any;
 }
 export interface IContractOptions {
-    id: string;
+    txId: string;
     name: string;
     email: string;
     passphrase: string;
@@ -79,7 +79,7 @@ export interface IContract extends IContractData {
     store(contract: IContractData): Promise<void>;
 }
 export interface IContractPublic {
-    id: string;
+    txId: string;
     createdAt: number;
     spaceReserved: number;
     replicationFactor: number;
@@ -87,7 +87,7 @@ export interface IContractPublic {
     contractSig: string;
 }
 export interface IContractPrivate {
-    id: string;
+    txId: string;
     name: string;
     email: string;
     passphrase: string;
