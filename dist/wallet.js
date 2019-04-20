@@ -185,7 +185,7 @@
         //   await this.contract.create(options)
         //   return this.getContract()
         // }
-        getPublicContract() {
+        getContract() {
             if (!this.contract.options) {
                 throw new Error('A contract does not exist, create one first');
             }
@@ -195,7 +195,8 @@
                 replicationFactor: this.contract.options.replicationFactor,
                 spaceReserved: this.contract.options.spaceReserved,
                 createdAt: this.contract.options.createdAt,
-                contractSig: this.contract.options.contractSig
+                contractSig: this.contract.options.contractSig,
+                contractId: this.contract.key.id
             };
             return contract;
         }

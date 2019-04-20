@@ -1,5 +1,5 @@
 import * as crypto from '@subspace/crypto'
-import {IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject,IContract, IContractPrivate, IContractPublic, IContractData, IPledge} from './interfaces'
+import {IKeyChain, IKey, IProfileOptions, IProfile, IProfileObject, IContract, IContractPrivate, IContractData, IPledge, IContractPublic} from './interfaces'
 export { IContractData, IPledge, IProfileObject, IProfileOptions }
 
 // TODO
@@ -190,7 +190,7 @@ export default class Wallet {
   //   return this.getContract()
   // }
 
-  public getPublicContract() {
+  public getContract() {
     if (!this.contract.options) {
       throw new Error('A contract does not exist, create one first')
     }
@@ -201,7 +201,8 @@ export default class Wallet {
       replicationFactor: this.contract.options.replicationFactor,
       spaceReserved: this.contract.options.spaceReserved,
       createdAt: this.contract.options.createdAt,
-      contractSig: this.contract.options.contractSig
+      contractSig: this.contract.options.contractSig,
+      contractId: this.contract.key.id
     }
 
     return contract

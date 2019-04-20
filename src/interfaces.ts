@@ -95,6 +95,7 @@ export interface IContractPublic {
   replicationFactor: number
   ttl: number
   contractSig: string
+  contractId: string
 }
 
 // takes a snapshot for 

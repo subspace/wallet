@@ -85,6 +85,7 @@ export interface IContractPublic {
     replicationFactor: number;
     ttl: number;
     contractSig: string;
+    contractId: string;
 }
 export interface IContractPrivate {
     txId: string;
